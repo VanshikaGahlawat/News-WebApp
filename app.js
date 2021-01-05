@@ -2,8 +2,16 @@ const express = require('express');
 require('dotenv').config();
 
 const mongoose = require('mongoose');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const cors = require('cors')
+const expressValidator = require('express-validator');
 
 //import routes
+const authRoutes = require('./routes/auth');
+
+
 //app
 const app = express();
 
@@ -17,9 +25,17 @@ mongoose.connect(process.env.DATABASE, {
     console.log('DB Connected')
 )
 
-app.get("/", (req, res)=>{
-    res.send("hello");
-})
+
+//middleware
+app.use(morgan('dev'));
+app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(expressValidator());
+app.use(cors());
+
+
+//routes middleware
+app.use('/api', authRoutes);
 
 
 const port = process.env.PORT || 8000;
